@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>KinderEdit AI - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed": "#001c3a",
+                    "error-container": "#93000a",
+                    "on-background": "#e0e2ea",
+                    "outline": "#8a919d",
+                    "tertiary-fixed-dim": "#ffb95c",
+                    "on-tertiary": "#462a00",
+                    "on-secondary-container": "#a3badf",
+                    "on-primary-fixed-variant": "#004881",
+                    "secondary": "#b1c8ee",
+                    "primary": "#a2c9ff",
+                    "primary-fixed": "#d3e4ff",
+                    "surface-tint": "#a2c9ff",
+                    "tertiary": "#ffb95c",
+                    "surface-container": "#1c2025",
+                    "surface-container-highest": "#31353b",
+                    "surface": "#101419",
+                    "secondary-container": "#334a6a",
+                    "warning": "#FFB648",
+                    "background-card": "#132F54",
+                    "secondary-fixed": "#d4e3ff",
+                    "outline-variant": "#404752",
+                    "border-subtle": "rgba(255,255,255,0.08)",
+                    "inverse-on-surface": "#2d3137",
+                    "text-secondary": "#A7B7CC",
+                    "on-tertiary-fixed": "#2a1700",
+                    "background": "#101419",
+                    "inverse-primary": "#0060a9",
+                    "on-surface": "#e0e2ea",
+                    "surface-container-low": "#181c21",
+                    "secondary-fixed-dim": "#b1c8ee",
+                    "on-primary": "#00315b",
+                    "on-primary-container": "#003866",
+                    "tertiary-fixed": "#ffddb7",
+                    "on-surface-variant": "#c0c7d4",
+                    "background-primary": "#071A2E",
+                    "surface-container-high": "#272a30",
+                    "primary-fixed-dim": "#a2c9ff",
+                    "on-secondary-fixed-variant": "#314867",
+                    "on-error": "#690005",
+                    "text-primary": "#F8FAFC",
+                    "on-tertiary-container": "#4f3000",
+                    "error": "#ffb4ab",
+                    "primary-container": "#4da3ff",
+                    "on-secondary": "#193150",
+                    "on-error-container": "#ffdad6",
+                    "surface-dim": "#101419",
+                    "inverse-surface": "#e0e2ea",
+                    "on-primary-fixed": "#001c38",
+                    "surface-variant": "#31353b",
+                    "surface-container-lowest": "#0b0e14",
+                    "surface-bright": "#36393f",
+                    "success": "#52D273",
+                    "on-tertiary-fixed-variant": "#653e00",
+                    "tertiary-container": "#de8f00"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-desktop": "40px",
+                    "section-gap": "64px",
+                    "gutter": "24px",
+                    "container-max": "1440px",
+                    "margin-mobile": "16px"
+            },
+            "fontFamily": {
+                    "body-sm": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-lg": ["Manrope"],
+                    "headline-md": ["Manrope"],
+                    "label-sm": ["Inter"],
+                    "body-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-xl": ["Manrope"]
+            },
+            "fontSize": {
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "headline-xl": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #071A2E;
+            color: #F8FAFC;
+            -webkit-font-smoothing: antialiased;
+        }
+        .glass-panel {
+            background: rgba(19, 47, 84, 0.4);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .ai-gradient {
+            background: linear-gradient(135deg, #4DA3FF 0%, #a2c9ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .workflow-line {
+            background: linear-gradient(to right, #4DA3FF 30%, rgba(255, 255, 255, 0.1) 30%);
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float {
+            animation: float 4s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="flex min-h-screen">
+<!-- SideNavBar (Shared Component) -->
+<aside class="w-[260px] h-screen fixed left-0 top-0 overflow-y-auto border-r border-border-subtle bg-background-primary flex flex-col p-6 gap-2 z-50">
+<div class="flex items-center gap-3 mb-8">
+<div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary">edit_square</span>
+</div>
+<div>
+<h1 class="text-headline-md font-headline-md font-black text-primary leading-tight">KinderEdit AI</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant opacity-70">Educator Portal</p>
+</div>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 bg-secondary-container text-on-secondary-container rounded-lg px-4 py-3 shadow-[0_0_15px_rgba(77,163,255,0.3)] cursor-pointer transition-all duration-300" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-high rounded-lg transition-all duration-300 group cursor-pointer" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">cloud_upload</span>
+<span class="font-label-md text-label-md">Video Upload</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-high rounded-lg transition-all duration-300 group cursor-pointer" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">auto_graph</span>
+<span class="font-label-md text-label-md">Event Timeline</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-high rounded-lg transition-all duration-300 group cursor-pointer" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">linked_camera</span>
+<span class="font-label-md text-label-md">Camera Recommendations</span>
+</a>
+</nav>
+<div class="mt-8">
+<button class="w-full py-3 px-4 bg-primary text-on-primary rounded-xl font-label-md text-label-md font-bold flex items-center justify-center gap-2 active:scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                New Project
+            </button>
+</div>
+<div class="mt-auto flex flex-col gap-1 pt-6 border-t border-border-subtle">
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-high rounded-lg transition-all duration-300 cursor-pointer" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-md text-label-md">Help Center</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-high rounded-lg transition-all duration-300 cursor-pointer" href="#">
+<span class="material-symbols-outlined text-error">logout</span>
+<span class="font-label-md text-label-md">Log Out</span>
+</a>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="ml-[260px] flex-1 min-h-screen relative overflow-hidden">
+<!-- Subtle Ambient Background Animation -->
+
+<!-- Content Container -->
+<div class="relative z-10 max-w-container-max mx-auto px-margin-desktop py-10">
+<!-- TopNavBar (Shared Component Inline Logic) -->
+<header class="flex justify-between items-center mb-10 h-[60px] w-full">
+<div class="flex gap-8">
+<a class="text-primary font-bold border-b-2 border-primary pb-1 font-label-md text-label-md cursor-pointer" href="#">My Projects</a>
+<a class="text-on-surface-variant font-medium font-label-md text-label-md hover:text-primary transition-colors duration-200 cursor-pointer" href="#">Team Library</a>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4 text-on-surface-variant">
+<span class="material-symbols-outlined cursor-pointer hover:text-primary transition-colors">notifications</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-primary transition-colors">settings</span>
+</div>
+<div class="flex items-center gap-3 pl-6 border-l border-border-subtle">
+<div class="text-right">
+<p class="font-label-md text-label-md text-on-surface">Ms. Sarah J.</p>
+<p class="text-[11px] text-on-surface-variant">Lead Educator</p>
+</div>
+<img class="w-10 h-10 rounded-full border border-primary/20 object-cover" data-alt="A professional headshot of a friendly educator in her 30s, smiling warmly. She has soft studio lighting that creates a professional yet approachable look. The background is a blurred classroom setting with soft navy and white tones that match the KinderEdit AI brand identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBRkiEswYoz9T-zrPvTjY-7hh3fur-qfNINh-SxQg3v9zfrNxkMvjNJMke828TnxyGqVOyyHExh9Fy4YSTzF-Aqi3C0TjS9pw88pYw7vAclF1wdT6-36C4hY1t1FRGVDJ6OC8suhHePgcnapu8V84g5tn_C663wzY6kw7bGIlKRuTuno2I6MxF75Yp6io6_Px0T3nP941S6--5e5EcsN5dDyI0ANBVxGEHOb3LqRPj350Df8TNOvyaCxw"/>
+</div>
+</div>
+</header>
+<!-- Welcome Card -->
+<section class="mb-section-gap">
+<div class="glass-panel rounded-[16px] p-8 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-32 -mt-32 blur-3xl"></div>
+<div class="flex-1 space-y-4">
+<div class="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 rounded-full text-primary border border-primary/20">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider">AI Assistant Online</span>
+</div>
+<h2 class="font-headline-xl text-headline-xl text-text-primary leading-tight">
+                            Good Morning, <span class="ai-gradient">Teacher</span>
+</h2>
+<p class="font-body-lg text-body-lg text-text-secondary max-w-xl">
+                            Let's create your graduation highlight video. I've already analyzed the raw footage from last week's rehearsals.
+                        </p>
+<div class="flex gap-4 pt-4">
+<button class="px-6 py-3 bg-primary text-on-primary rounded-xl font-label-md text-label-md font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform active:scale-95">
+                                Resume Last Project
+                            </button>
+<button class="px-6 py-3 glass-panel text-on-surface rounded-xl font-label-md text-label-md font-bold hover:bg-surface-container-high transition-colors">
+                                View Assets
+                            </button>
+</div>
+</div>
+<div class="w-full md:w-1/3 flex justify-center items-center">
+<div class="relative w-48 h-48 animate-float">
+<div class="absolute inset-0 bg-primary/20 blur-2xl rounded-full"></div>
+
+</div>
+</div>
+</div>
+</section>
+<!-- Project Progress Workflow -->
+<section>
+<div class="flex justify-between items-end mb-8">
+<div>
+<h3 class="font-headline-md text-headline-md text-text-primary">Graduation Highlight 2024</h3>
+<p class="font-body-sm text-body-sm text-text-secondary">Project ID: KE-4829 • Last saved 2 minutes ago</p>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-success flex items-center gap-1 font-label-md text-label-md">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+                            32% Complete
+                        </span>
+</div>
+</div>
+<!-- Bento Grid Workflow -->
+<div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-gutter relative">
+<!-- Connector Line (Decorative) -->
+<div class="hidden lg:block absolute top-1/2 left-0 w-full h-[2px] bg-white/5 -translate-y-1/2 z-0"></div>
+<!-- Step 1: Upload -->
+<div class="glass-panel p-6 rounded-[16px] relative z-10 hover:border-primary/50 transition-colors group">
+<div class="w-12 h-12 rounded-xl bg-success/20 text-success flex items-center justify-center mb-4">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">cloud_done</span>
+</div>
+<h4 class="font-label-md text-label-md text-text-primary mb-1">Upload</h4>
+<p class="text-[12px] text-text-secondary">142 Clips Added</p>
+<div class="mt-4 flex items-center gap-2">
+<div class="flex-1 h-1 bg-success rounded-full"></div>
+<span class="text-[10px] font-bold text-success">DONE</span>
+</div>
+</div>
+<!-- Step 2: Synchronization -->
+<div class="glass-panel p-6 rounded-[16px] relative z-10 border-primary/30 ring-1 ring-primary/20 shadow-xl shadow-primary/5">
+<div class="w-12 h-12 rounded-xl bg-primary/20 text-primary flex items-center justify-center mb-4">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">sync</span>
+</div>
+<h4 class="font-label-md text-label-md text-text-primary mb-1">Synchronization</h4>
+<p class="text-[12px] text-text-secondary">Multi-cam alignment</p>
+<div class="mt-4 flex flex-col gap-1">
+<div class="flex justify-between text-[10px] font-bold text-primary">
+<span>PROCESSING</span>
+<span>85%</span>
+</div>
+<div class="h-1 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[85%] rounded-full shadow-[0_0_8px_#4DA3FF]"></div>
+</div>
+</div>
+</div>
+<!-- Step 3: AI Recommendation -->
+<div class="glass-panel p-6 rounded-[16px] relative z-10 opacity-70 hover:opacity-100 transition-opacity">
+<div class="w-12 h-12 rounded-xl bg-surface-container-highest text-text-secondary flex items-center justify-center mb-4">
+<span class="material-symbols-outlined">auto_awesome</span>
+</div>
+<h4 class="font-label-md text-label-md text-text-primary mb-1">AI Curation</h4>
+<p class="text-[12px] text-text-secondary">Best moments selection</p>
+<div class="mt-4 flex items-center gap-2">
+<div class="flex-1 h-1 bg-surface-container-highest rounded-full"></div>
+<span class="text-[10px] font-bold text-text-secondary">PENDING</span>
+</div>
+</div>
+<!-- Step 4: EDL Review -->
+<div class="glass-panel p-6 rounded-[16px] relative z-10 opacity-70 hover:opacity-100 transition-opacity">
+<div class="w-12 h-12 rounded-xl bg-surface-container-highest text-text-secondary flex items-center justify-center mb-4">
+<span class="material-symbols-outlined">movie_edit</span>
+</div>
+<h4 class="font-label-md text-label-md text-text-primary mb-1">EDL Review</h4>
+<p class="text-[12px] text-text-secondary">Teacher approval</p>
+<div class="mt-4 flex items-center gap-2">
+<div class="flex-1 h-1 bg-surface-container-highest rounded-full"></div>
+<span class="text-[10px] font-bold text-text-secondary">WAITING</span>
+</div>
+</div>
+<!-- Step 5: Rendering -->
+<div class="glass-panel p-6 rounded-[16px] relative z-10 opacity-70 hover:opacity-100 transition-opacity">
+<div class="w-12 h-12 rounded-xl bg-surface-container-highest text-text-secondary flex items-center justify-center mb-4">
+<span class="material-symbols-outlined">media_output</span>
+</div>
+<h4 class="font-label-md text-label-md text-text-primary mb-1">Rendering</h4>
+<p class="text-[12px] text-text-secondary">Cloud processing</p>
+<div class="mt-4 flex items-center gap-2">
+<div class="flex-1 h-1 bg-surface-container-highest rounded-full"></div>
+<span class="text-[10px] font-bold text-text-secondary">QUEUED</span>
+</div>
+</div>
+<!-- Step 6: Final Output -->
+<div class="glass-panel p-6 rounded-[16px] relative z-10 opacity-70 hover:opacity-100 transition-opacity">
+<div class="w-12 h-12 rounded-xl bg-surface-container-highest text-text-secondary flex items-center justify-center mb-4">
+<span class="material-symbols-outlined">celebration</span>
+</div>
+<h4 class="font-label-md text-label-md text-text-primary mb-1">Final Export</h4>
+<p class="text-[12px] text-text-secondary">Parent distribution</p>
+<div class="mt-4 flex items-center gap-2">
+<div class="flex-1 h-1 bg-surface-container-highest rounded-full"></div>
+<span class="material-symbols-outlined text-[14px] text-text-secondary">lock</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Secondary Bento: Recent AI Insights -->
+<section class="mt-12">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<!-- AI Insight Card -->
+<div class="glass-panel p-8 rounded-[16px] border-l-4 border-l-warning">
+<div class="flex justify-between items-start mb-6">
+<div>
+<h4 class="font-headline-md text-headline-md text-text-primary">Sync Alert</h4>
+<p class="font-body-sm text-body-sm text-text-secondary">Camera 2 audio drift detected (42ms)</p>
+</div>
+<span class="px-3 py-1 bg-warning/10 text-warning rounded-full font-label-sm text-label-sm">Requires Attention</span>
+</div>
+<div class="bg-background-primary/50 rounded-xl p-4 flex items-center gap-4 border border-border-subtle">
+<div class="w-24 h-14 bg-cover bg-center rounded-lg" data-alt="A stylized video editing timeline interface showing two parallel waveform tracks. One waveform is slightly offset from the other, highlighted with a subtle amber glow to indicate an audio sync error. The overall aesthetic is dark mode, professional, and minimalist." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBusolgpU_lLSAAkYM9-rsvEDTbpVn_ys9Ny8QhXiInhomNJLnwDlCLtGM_8_zHdZ_0hT3it0PtmmDubJkYv7DugZB2Mr5XBHyDP0nIm2qXVC5J9DyIyvZfgNYaM5LU5nULc2Mmkct0hEeX5t-2CzK4dYTGPU0LWvdfhedCYzlDd_kBUHB1pJzAzxqzPPrx3cLq0kl6MwDlkJ42zmjo378kX20sfhDb0t9dYGYu-yxfpnsREBoCDLP2dw')"></div>
+<div class="flex-1">
+<p class="text-body-sm font-medium">Rehearsal_Cam02.mp4</p>
+<button class="mt-2 text-primary text-label-sm font-bold flex items-center gap-1 hover:underline">
+                                    Apply Auto-Correction
+                                    <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- AI Clip Highlights -->
+<div class="glass-panel p-8 rounded-[16px]">
+<h4 class="font-headline-md text-headline-md text-text-primary mb-6">AI Selected Highlights</h4>
+<div class="flex -space-x-4">
+<div class="w-16 h-16 rounded-xl border-2 border-background-primary overflow-hidden hover:-translate-y-2 transition-transform cursor-pointer relative group">
+<img class="w-full h-full object-cover" data-alt="A close-up of a child in a graduation cap and gown, laughing joyfully. The lighting is warm and golden, as if captured during sunset. The image has a soft-focus background and a cinematic, high-quality look consistent with the KinderEdit AI aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_Jo36Xcx7gnbxKRuQmivpO5bN5FhbivTNbgSW0LT10kRuctA3gTAq_vF-dZteYLDybwJxYJjHO7xV-2SXH-V2afj_P-PQ8NKQ0O2z_14KCylGfI7GpcNPrYocgsposB4YITUl30qvec3rVXBEZKTEufYkwhUCoyaH16iVjxh2-S_0BH8tac2Rkpod1ObAUAVcUvlkzkdbmaCTxut5z5OxjFt9QQqbcn3nUGm22kYih9eRRLo2toF_YQ"/>
+<div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+<span class="material-symbols-outlined text-white">play_arrow</span>
+</div>
+</div>
+<div class="w-16 h-16 rounded-xl border-2 border-background-primary overflow-hidden hover:-translate-y-2 transition-transform cursor-pointer relative group">
+<img class="w-full h-full object-cover" data-alt="An wide-angle shot of a group of preschool students holding hands in a circle on a stage. The stage is decorated with colorful banners. The lighting is bright and even, capturing a festive and emotional school moment. Professional quality with a high-end SaaS software visual style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxTT968QQaDD7CnmuOtiId5kAGDQhZEC_z8VTXoiK6u-yvVYvx8y3lmAs3t1kJb7wGJjYKDEPcbadgqedtttvCxb2mfiT5MBhU33mtT42_qal4kydd8LR0eCo4crZ_tWCSt2CkS9lvuTOAQC0ei0E_JA3Twzt63gxdAucjoshxLLQNR-M1OvQtrVzrN0fFZ0hGkYCwKRYhJrhkbRC8g_sh2IenEnL-owHQgDU5PCgnylOJ9yaWdNbZpA"/>
+<div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+<span class="material-symbols-outlined text-white">play_arrow</span>
+</div>
+</div>
+<div class="w-16 h-16 rounded-xl border-2 border-background-primary overflow-hidden hover:-translate-y-2 transition-transform cursor-pointer relative group">
+<img class="w-full h-full object-cover" data-alt="A candid shot of a teacher adjusting a small child's graduation tassel. The moment is intimate and heartwarming, with soft ambient light coming from a nearby window. The color palette features deep blues and clean whites, aligning with a trustworthy AI assistant brand." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUEV78kbgtZtQ9L_GcL2aE56-2Exd4rZv9DfVzCsB0RJDcRXVl5u5wXESZ3rjTgNULat_XjSSqjsw06D6Fbl1DVOdrKTZXpmXCflahj5sduCdlD7lZuB_on54DH8ey2r-iULtvLMs7Sh2UU0G0YAxOj9QEX8IIG142oHxKsu4u9L7Lz1CeIO2v1koBJAYsTyQoiPIlncgVwpeLANA2ZlWGxo2FAqF-ML81NUPSphul6Se-EqVcZc7S4w"/>
+<div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+<span class="material-symbols-outlined text-white">play_arrow</span>
+</div>
+</div>
+<div class="w-16 h-16 rounded-xl border-2 border-background-primary flex items-center justify-center bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm cursor-pointer hover:bg-primary/20 transition-colors">
+                                +18
+                            </div>
+</div>
+<p class="mt-6 text-body-sm text-text-secondary">
+                            I've found 21 high-emotional moments. 
+                            <a class="text-primary font-bold hover:underline ml-1" href="#">Review Recommendations →</a>
+</p>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Interactive Layer Script -->
+<script>
+        // Simple micro-interaction for workflow cards
+        document.querySelectorAll('.glass-panel').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+            });
+        });
+    </script>
+</body></html>

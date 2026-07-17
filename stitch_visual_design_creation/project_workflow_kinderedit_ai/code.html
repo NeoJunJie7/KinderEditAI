@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>KinderEdit AI - Main Workflow</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed": "#001c3a",
+                    "error-container": "#93000a",
+                    "on-background": "#e0e2ea",
+                    "outline": "#8a919d",
+                    "tertiary-fixed-dim": "#ffb95c",
+                    "on-tertiary": "#462a00",
+                    "on-secondary-container": "#a3badf",
+                    "on-primary-fixed-variant": "#004881",
+                    "secondary": "#b1c8ee",
+                    "primary": "#a2c9ff",
+                    "primary-fixed": "#d3e4ff",
+                    "surface-tint": "#a2c9ff",
+                    "tertiary": "#ffb95c",
+                    "surface-container": "#1c2025",
+                    "surface-container-highest": "#31353b",
+                    "surface": "#101419",
+                    "secondary-container": "#334a6a",
+                    "warning": "#FFB648",
+                    "background-card": "#132F54",
+                    "secondary-fixed": "#d4e3ff",
+                    "outline-variant": "#404752",
+                    "border-subtle": "rgba(255,255,255,0.08)",
+                    "inverse-on-surface": "#2d3137",
+                    "text-secondary": "#A7B7CC",
+                    "on-tertiary-fixed": "#2a1700",
+                    "background": "#101419",
+                    "inverse-primary": "#0060a9",
+                    "on-surface": "#e0e2ea",
+                    "surface-container-low": "#181c21",
+                    "secondary-fixed-dim": "#b1c8ee",
+                    "on-primary": "#00315b",
+                    "on-primary-container": "#003866",
+                    "tertiary-fixed": "#ffddb7",
+                    "on-surface-variant": "#c0c7d4",
+                    "background-primary": "#071A2E",
+                    "surface-container-high": "#272a30",
+                    "primary-fixed-dim": "#a2c9ff",
+                    "on-secondary-fixed-variant": "#314867",
+                    "on-error": "#690005",
+                    "text-primary": "#F8FAFC",
+                    "on-tertiary-container": "#4f3000",
+                    "error": "#ffb4ab",
+                    "primary-container": "#4da3ff",
+                    "on-secondary": "#193150",
+                    "on-error-container": "#ffdad6",
+                    "surface-dim": "#101419",
+                    "inverse-surface": "#e0e2ea",
+                    "on-primary-fixed": "#001c38",
+                    "surface-variant": "#31353b",
+                    "surface-container-lowest": "#0b0e14",
+                    "surface-bright": "#36393f",
+                    "success": "#52D273",
+                    "on-tertiary-fixed-variant": "#653e00",
+                    "tertiary-container": "#de8f00"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-desktop": "40px",
+                    "section-gap": "64px",
+                    "gutter": "24px",
+                    "container-max": "1440px",
+                    "margin-mobile": "16px"
+            },
+            "fontFamily": {
+                    "body-sm": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-lg": ["Manrope"],
+                    "headline-md": ["Manrope"],
+                    "label-sm": ["Inter"],
+                    "body-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-xl": ["Manrope"]
+            },
+            "fontSize": {
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "headline-xl": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .glass-card {
+            background: rgba(19, 47, 84, 0.6);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+        }
+        .ai-glow {
+            box-shadow: 0 0 20px rgba(77, 163, 255, 0.2);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.02);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(162, 201, 255, 0.2);
+            border-radius: 10px;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background-primary text-on-background min-h-screen font-body-md overflow-x-hidden">
+<!-- Top Navigation -->
+<nav class="h-[80px] w-full sticky top-0 z-50 border-b border-border-subtle bg-surface/80 backdrop-blur-xl shadow-sm flex justify-between items-center px-margin-desktop">
+<div class="flex items-center gap-8">
+<span class="text-headline-md font-headline-xl font-bold text-primary">KinderEdit AI</span>
+<div class="hidden md:flex items-center gap-6">
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors" href="#">My Projects</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors" href="#">Team Library</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary p-2">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary p-2">settings</span>
+<div class="w-10 h-10 rounded-full overflow-hidden border border-primary-container">
+<img class="w-full h-full object-cover" data-alt="A professional studio portrait of a friendly female educator with a warm smile, softly lit against a clean modern office background. The lighting is high-key and professional, using a primary blue and soft white palette consistent with a modern corporate AI dashboard aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrZ1VNUewjNepF-ArLgO8q7OCr7Oh14sNI52dtEucwupRlmRkt7UzMTYlGnW4DspMMxWyQBAeyTSnr0IsGQrlCBQrUJZ7uJdxH-B-UjbzgSIucU1bqjpQM9P-gDYh2RtGNos3fay4d0gDlQJVkZssrk1LoYPSUKaCJwEng8Lm4MZYTLWeBDF2YAhd_WrLD6gAzBbjLcMHKrmCslQ-ZR-KGQsgiOuUojK3nQIKyXVwUoU1p27M0kT_9BQ"/>
+</div>
+</div>
+</nav>
+<div class="flex min-h-[calc(100vh-80px)]">
+<!-- Sidebar -->
+<aside class="w-[260px] border-r border-border-subtle bg-background-primary p-6 flex flex-col gap-2 sticky top-[80px] h-[calc(100vh-80px)] hidden lg:flex">
+<div class="mb-8">
+<p class="text-label-sm uppercase tracking-wider text-on-surface-variant opacity-60 mb-4">Navigation</p>
+<nav class="space-y-1">
+<div class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-high rounded-lg cursor-pointer transition-all">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</div>
+<div class="flex items-center gap-3 bg-secondary-container text-on-secondary-container rounded-lg px-4 py-3 shadow-[0_0_15px_rgba(77,163,255,0.3)] cursor-pointer">
+<span class="material-symbols-outlined">auto_graph</span>
+<span class="font-label-md text-label-md">Event Timeline</span>
+</div>
+<div class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-high rounded-lg cursor-pointer transition-all">
+<span class="material-symbols-outlined">cloud_upload</span>
+<span class="font-label-md text-label-md">Video Upload</span>
+</div>
+<div class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-high rounded-lg cursor-pointer transition-all">
+<span class="material-symbols-outlined">linked_camera</span>
+<span class="font-label-md text-label-md">Camera Recommendations</span>
+</div>
+</nav>
+</div>
+<button class="w-full py-3 bg-primary-container text-on-primary-container rounded-lg font-label-md text-label-md font-bold flex items-center justify-center gap-2 active:scale-95 transition-transform mb-auto">
+<span class="material-symbols-outlined">add</span>
+                New Project
+            </button>
+<div class="border-t border-border-subtle pt-4 space-y-1">
+<div class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-high rounded-lg cursor-pointer transition-all">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-md text-label-md">Help Center</span>
+</div>
+<div class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-high rounded-lg cursor-pointer transition-all">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-md text-label-md">Log Out</span>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 p-margin-desktop max-w-container-max mx-auto w-full">
+<!-- Header & Action Required -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+<div>
+<h1 class="font-headline-lg text-headline-lg text-text-primary">Winter Recital 2024</h1>
+<p class="text-on-surface-variant">Processing school event footage • AI Sync Active</p>
+</div>
+<!-- Human Review Panel -->
+<div class="glass-card ai-glow p-6 rounded-xl flex items-center gap-6 border-primary/20">
+<div class="flex-shrink-0 w-12 h-12 bg-primary-container/20 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-primary-container" style="font-variation-settings: 'FILL' 1;">privacy_tip</span>
+</div>
+<div>
+<h4 class="font-label-md text-label-md font-bold text-primary">Human Review Required</h4>
+<p class="text-body-sm text-text-secondary">3 complex transitions need manual approval</p>
+</div>
+<button class="bg-primary-container hover:bg-primary-container/90 text-on-primary-container px-6 py-2.5 rounded-lg font-label-md text-label-md font-bold transition-all shadow-lg shadow-primary/20">
+                        Review EDL
+                    </button>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Panel 1: Video Sources (L:4) -->
+<section class="lg:col-span-4 glass-card rounded-2xl p-6 flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<h3 class="font-headline-md text-headline-md text-text-primary text-lg">Video Sources</h3>
+<span class="text-xs text-success bg-success/10 px-2 py-1 rounded">Synced</span>
+</div>
+<div class="space-y-4">
+<div class="group cursor-pointer relative rounded-xl overflow-hidden border border-border-subtle hover:border-primary/50 transition-all">
+<div class="aspect-video relative">
+<img class="w-full h-full object-cover" data-alt="A cinematic wide-angle shot of a school auditorium stage decorated for a winter performance. Soft blue and purple stage lighting illuminates the empty wooden floor. The shot is crisp, high-definition, and follows a clean professional architectural photography style with cool tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDai_jCbjf0SKTj0JrSFgRYbqrzqKQoz7h1aMTJppvJyX_ba65pQ8DodWpbGyhsF_c_z4FHN-FDKVw7taa_txOCgGacPJUiyaE6ZoujJCNVKmbIaB_87gGxeGo8MlMOE6oA83KybCzkla9OkrIHuT-NJIPQP1_C06VoW51VipnIJwRRRw3SwdYPwJMmZroaWSMj1M-Bwxr3jdke7B1VIR6T93lnM7WV2fb0zdPiSWV9ERRskghTcEYuKg"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<div class="absolute bottom-3 left-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-white text-sm">videocam</span>
+<span class="text-white text-xs font-bold uppercase tracking-tight">Cam 1 • Front View</span>
+</div>
+</div>
+</div>
+<div class="group cursor-pointer relative rounded-xl overflow-hidden border border-border-subtle hover:border-primary/50 transition-all">
+<div class="aspect-video relative">
+<img class="w-full h-full object-cover" data-alt="A wide-angle perspective from the back of a darkened school hall, looking towards a brightly lit stage where students are gathered. The atmosphere is bustling yet orderly, with soft bokeh from the audience in the foreground. The visual style is modern, cinematic, and focuses on professional production quality with deep blues and crisp highlights." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJi63bm3fobnAEDwsvvihTleAL7JfjrsmUOgjW-PAaydAaBoTXCbIca0Ba02GYkF6nLDwbHJ3MN-mU9zXMECi5m1fNG3602cVgscQbSuwCFG1OduLh0GZGlLMR5Fdhg2UmCObnbLIbyF99oB74-8rSD6cL2dlfeuLvQtrfPkLmBVbYe3jiCF0Vsu8MgZ5eVrBzAW-Jr3YmwVDGe5n77G5fA6NuU1IkdOcekc_a3puRO76zQ6DUTurdPg"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<div class="absolute bottom-3 left-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-white text-sm">videocam</span>
+<span class="text-white text-xs font-bold uppercase tracking-tight">Cam 2 • Wide View</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Panel 2: Event Timeline (L:8) -->
+<section class="lg:col-span-8 glass-card rounded-2xl p-6 flex flex-col gap-6">
+<div class="flex items-center justify-between">
+<h3 class="font-headline-md text-headline-md text-text-primary text-lg">Event Timeline</h3>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="text-xs text-on-surface-variant font-medium">AI Analysis in Progress</span>
+</div>
+</div>
+<div class="flex flex-wrap gap-3">
+<div class="bg-secondary-container/30 border border-secondary-container text-primary rounded-full px-5 py-2 flex items-center gap-2 cursor-default">
+<span class="material-symbols-outlined text-lg">mic</span>
+<span class="text-label-md">Opening Speech</span>
+</div>
+<div class="bg-primary/10 border border-primary/20 text-on-surface-variant rounded-full px-5 py-2 flex items-center gap-2 cursor-default">
+<span class="material-symbols-outlined text-lg">groups</span>
+<span class="text-label-md">Student Performance</span>
+</div>
+<div class="bg-primary/10 border border-primary/20 text-on-surface-variant rounded-full px-5 py-2 flex items-center gap-2 cursor-default">
+<span class="material-symbols-outlined text-lg">celebration</span>
+<span class="text-label-md">Award Ceremony</span>
+</div>
+<div class="bg-primary/10 border border-primary/20 text-on-surface-variant rounded-full px-5 py-2 flex items-center gap-2 cursor-default">
+<span class="material-symbols-outlined text-lg">handshake</span>
+<span class="text-label-md">Closing Remarks</span>
+</div>
+<button class="border border-dashed border-outline-variant text-outline hover:border-primary hover:text-primary transition-all rounded-full px-5 py-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">add</span>
+<span class="text-label-md">Add Event</span>
+</button>
+</div>
+<!-- Timeline Visualizer Placeholder -->
+<div class="h-24 w-full bg-surface-container-low rounded-xl border border-border-subtle relative overflow-hidden">
+<div class="absolute inset-0 opacity-20">
+<div class="h-full w-full" style="background-image: linear-gradient(90deg, transparent 49%, #4DA3FF 50%, transparent 51%); background-size: 40px 100%;"></div>
+</div>
+<div class="absolute bottom-0 left-0 h-1 bg-primary w-2/3 shadow-[0_0_10px_#4DA3FF]"></div>
+</div>
+</section>
+<!-- Panel 3: AI Camera Recommendations (L:5) -->
+<section class="lg:col-span-5 glass-card rounded-2xl p-6 flex flex-col gap-6">
+<h3 class="font-headline-md text-headline-md text-text-primary text-lg">AI Camera Recommendations</h3>
+<div class="space-y-4 custom-scrollbar overflow-y-auto max-h-[500px] pr-2">
+<!-- Recommendation Card 1 -->
+<div class="bg-background-card rounded-xl border border-border-subtle p-5 hover:border-primary/40 transition-colors">
+<div class="flex justify-between items-start mb-3">
+<div>
+<span class="text-[10px] uppercase font-bold tracking-widest text-primary opacity-80">Event</span>
+<p class="font-label-md text-text-primary">Solo Violin Performance</p>
+</div>
+<div class="bg-primary/20 rounded px-2 py-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-sm text-primary" style="font-variation-settings: 'FILL' 1;">bolt</span>
+<span class="text-[10px] font-bold text-primary">85% Confidence</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4 mb-4">
+<div class="p-3 bg-surface-container/50 rounded-lg">
+<p class="text-[10px] text-on-surface-variant uppercase mb-1">Recommendation</p>
+<p class="text-body-sm font-bold text-primary">Camera 1 (Front)</p>
+</div>
+<div class="p-3 bg-surface-container/50 rounded-lg">
+<p class="text-[10px] text-on-surface-variant uppercase mb-1">Reason</p>
+<p class="text-[11px] leading-tight text-text-secondary">Optimal framing for centered solo subject.</p>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="flex-1 py-2 rounded-lg bg-primary-container text-on-primary-container text-xs font-bold hover:opacity-90 transition-opacity">Approve</button>
+<button class="flex-1 py-2 rounded-lg border border-border-subtle text-on-surface-variant text-xs font-bold hover:bg-surface-container-high transition-colors">Modify</button>
+</div>
+</div>
+<!-- Recommendation Card 2 -->
+<div class="bg-background-card rounded-xl border border-border-subtle p-5 hover:border-primary/40 transition-colors">
+<div class="flex justify-between items-start mb-3">
+<div>
+<span class="text-[10px] uppercase font-bold tracking-widest text-primary opacity-80">Event</span>
+<p class="font-label-md text-text-primary">Chorus Finale</p>
+</div>
+<div class="bg-primary/20 rounded px-2 py-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-sm text-primary" style="font-variation-settings: 'FILL' 1;">bolt</span>
+<span class="text-[10px] font-bold text-primary">92% Confidence</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4 mb-4">
+<div class="p-3 bg-surface-container/50 rounded-lg">
+<p class="text-[10px] text-on-surface-variant uppercase mb-1">Recommendation</p>
+<p class="text-body-sm font-bold text-primary">Camera 2 (Wide)</p>
+</div>
+<div class="p-3 bg-surface-container/50 rounded-lg">
+<p class="text-[10px] text-on-surface-variant uppercase mb-1">Reason</p>
+<p class="text-[11px] leading-tight text-text-secondary">Capture full width of ensemble group.</p>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="flex-1 py-2 rounded-lg bg-primary-container text-on-primary-container text-xs font-bold hover:opacity-90 transition-opacity">Approve</button>
+<button class="flex-1 py-2 rounded-lg border border-border-subtle text-on-surface-variant text-xs font-bold hover:bg-surface-container-high transition-colors">Modify</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Panel 4: Generated EDL (L:7) -->
+<section class="lg:col-span-7 glass-card rounded-2xl p-6 flex flex-col gap-4 overflow-hidden">
+<div class="flex items-center justify-between">
+<h3 class="font-headline-md text-headline-md text-text-primary text-lg">Generated EDL</h3>
+<button class="text-primary hover:bg-primary/10 px-3 py-1.5 rounded-lg text-sm flex items-center gap-2 transition-colors">
+<span class="material-symbols-outlined text-base">download</span>
+                            Export EDL
+                        </button>
+</div>
+<div class="overflow-x-auto custom-scrollbar">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="text-[11px] uppercase tracking-wider text-on-surface-variant border-b border-border-subtle">
+<th class="pb-3 px-2 font-bold">Start</th>
+<th class="pb-3 px-2 font-bold">End</th>
+<th class="pb-3 px-2 font-bold">Camera</th>
+<th class="pb-3 px-2 font-bold">Transition</th>
+<th class="pb-3 px-2 font-bold">Overlay Text</th>
+<th class="pb-3 px-2"></th>
+</tr>
+</thead>
+<tbody class="text-sm divide-y divide-border-subtle/50">
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="py-4 px-2 text-primary font-mono">00:00:00</td>
+<td class="py-4 px-2 text-primary font-mono">00:02:15</td>
+<td class="py-4 px-2">
+<select class="bg-transparent border-none p-0 text-sm focus:ring-0 text-on-surface">
+<option>Camera 1</option>
+<option selected="">Camera 2</option>
+</select>
+</td>
+<td class="py-4 px-2">Fade In</td>
+<td class="py-4 px-2 italic text-on-surface-variant">Winter Recital 2024</td>
+<td class="py-4 px-2 text-right">
+<span class="material-symbols-outlined text-outline cursor-pointer hover:text-primary opacity-0 group-hover:opacity-100 transition-opacity">edit</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="py-4 px-2 text-primary font-mono">00:02:15</td>
+<td class="py-4 px-2 text-primary font-mono">00:05:30</td>
+<td class="py-4 px-2">
+<select class="bg-transparent border-none p-0 text-sm focus:ring-0 text-on-surface">
+<option selected="">Camera 1</option>
+<option>Camera 2</option>
+</select>
+</td>
+<td class="py-4 px-2">Cut</td>
+<td class="py-4 px-2 italic text-on-surface-variant">—</td>
+<td class="py-4 px-2 text-right">
+<span class="material-symbols-outlined text-outline cursor-pointer hover:text-primary opacity-0 group-hover:opacity-100 transition-opacity">edit</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="py-4 px-2 text-primary font-mono">00:05:30</td>
+<td class="py-4 px-2 text-primary font-mono">00:08:45</td>
+<td class="py-4 px-2">
+<select class="bg-transparent border-none p-0 text-sm focus:ring-0 text-on-surface">
+<option>Camera 1</option>
+<option selected="">Camera 2</option>
+</select>
+</td>
+<td class="py-4 px-2">Cross-Dissolve</td>
+<td class="py-4 px-2 italic text-on-surface-variant">Solo Performance</td>
+<td class="py-4 px-2 text-right">
+<span class="material-symbols-outlined text-outline cursor-pointer hover:text-primary opacity-0 group-hover:opacity-100 transition-opacity">edit</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors group bg-error/5 border-l-2 border-error">
+<td class="py-4 px-2 text-error font-mono">00:08:45</td>
+<td class="py-4 px-2 text-error font-mono">00:10:00</td>
+<td class="py-4 px-2">
+<span class="text-error font-bold italic">Manual Fix</span>
+</td>
+<td class="py-4 px-2">Sync Error</td>
+<td class="py-4 px-2 italic text-on-surface-variant">—</td>
+<td class="py-4 px-2 text-right">
+<button class="bg-error-container text-white px-2 py-1 rounded text-[10px] font-bold">FIX</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</div>
+</main>
+</div>
+<!-- Micro-interaction Tooltip/Notification -->
+<div class="fixed bottom-8 right-8 glass-card border-primary p-4 rounded-xl translate-y-32 opacity-0 transition-all duration-500 z-[100] flex items-center gap-3" id="toast">
+<div class="w-8 h-8 rounded-full bg-success/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-success text-lg">check_circle</span>
+</div>
+<p class="text-sm font-medium">Changes auto-saved to cloud</p>
+</div>
+<script>
+        // Simple micro-interaction for the "Approve" buttons
+        document.querySelectorAll('button').forEach(btn => {
+            if (btn.innerText === 'Approve') {
+                btn.addEventListener('click', function() {
+                    const originalText = this.innerText;
+                    this.innerText = 'Approved';
+                    this.classList.add('bg-success', 'text-white');
+                    this.classList.remove('bg-primary-container', 'text-on-primary-container');
+                    
+                    const toast = document.getElementById('toast');
+                    toast.classList.remove('translate-y-32', 'opacity-0');
+                    
+                    setTimeout(() => {
+                        toast.classList.add('translate-y-32', 'opacity-0');
+                    }, 3000);
+                });
+            }
+        });
+    </script>
+</body></html>
