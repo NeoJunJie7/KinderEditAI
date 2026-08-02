@@ -1,0 +1,4 @@
+moviepy>=1.0.3
+audalign>=1.0.0
+opencv-python>=4.8.0
+auto-editor>=23.1.1
