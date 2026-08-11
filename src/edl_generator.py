@@ -46,6 +46,7 @@ def _pick_camera(
     previous_camera: Optional[str] = None,
     consecutive_count: int = 0,
     round_robin_index: int = 0,
+    debug_scores: bool = False,
 ) -> Tuple[str, str]:
     """Select the best camera for a time window by comparing audio energy scores."""
     cameras = [name for name in offsets.keys() if name != "performance_window"]
@@ -60,28 +61,66 @@ def _pick_camera(
     end_time = max(start_time, end_time if end_time is not None else start_time + 5.0)
 
     energies: Dict[str, float] = {}
+    valid_cameras: List[str] = []
     for camera_name in cameras:
         candidate_path = video_dir / camera_name
         if not candidate_path.exists() and not camera_name.endswith(".mp4"):
             candidate_path = video_dir / f"{camera_name}.mp4"
         if not candidate_path.exists():
             energies[camera_name] = 0.0
+            if debug_scores:
+                print(f"DEBUG {camera_name}: missing source file, scored 0")
             continue
 
-        offset_sec = float(offsets[camera_name].get("offset_sec", 0.0))
-        energies[camera_name] = compute_camera_energy(candidate_path, start_time, end_time, offset_sec)
+        camera_info = offsets.get(camera_name, {})
+        camera_source_start = float(camera_info.get("performance_start_sec", 0.0))
+        camera_source_end = float(camera_info.get("performance_end_sec", float("inf")))
+        offset_sec = float(camera_info.get("offset_sec", 0.0))
+        camera_timeline_start = 0.0
+        camera_timeline_end = max(0.0, camera_source_end - camera_source_start)
+        if start_time < camera_timeline_start or end_time > camera_timeline_end:
+            energies[camera_name] = 0.0
+            if debug_scores:
+                print(
+                    f"DEBUG {camera_name}: segment [{start_time:.3f},{end_time:.3f}] not fully covered by timeline "
+                    f"[{camera_timeline_start:.3f},{camera_timeline_end:.3f}], scored 0"
+                )
+            continue
+
+        valid_cameras.append(camera_name)
+        energy = compute_camera_energy(candidate_path, start_time, end_time, offset_sec)
+        energies[camera_name] = energy
+        if debug_scores:
+            print(
+                f"DEBUG {camera_name}: segment [{start_time:.3f},{end_time:.3f}], "
+                f"offset={offset_sec:.3f}, energy={energy:.6f}"
+            )
 
     ranked = sorted(energies.items(), key=lambda item: item[1], reverse=True)
-    if all(score < MIN_ENERGY_THRESHOLD for _, score in ranked):
+    if not valid_cameras:
         fallback_camera = cameras[round_robin_index % len(cameras)]
-        return fallback_camera, "Low energy across cameras — deterministic round-robin"
+        return fallback_camera, "No camera has valid coverage for this segment — deterministic round-robin"
 
-    candidate_name = ranked[0][0]
+    if all(score < MIN_ENERGY_THRESHOLD for camera, score in ranked if camera in valid_cameras):
+        candidate_name = next((camera for camera, _ in ranked if camera in valid_cameras), valid_cameras[0])
+        return candidate_name, "Low energy across valid cameras — selected highest valid energy"
+
+    ranked_valid = [(camera, score) for camera, score in ranked if camera in valid_cameras]
+    if ranked_valid:
+        top_score = ranked_valid[0][1]
+        tied = [camera for camera, score in ranked_valid if abs(score - top_score) < 1e-9]
+        candidate_name = tied[round_robin_index % len(tied)] if len(tied) > 1 else ranked_valid[0][0]
+    else:
+        candidate_name = ranked[0][0]
+
     if previous_camera and previous_camera == candidate_name and consecutive_count >= MAX_CONSECUTIVE_SEGMENTS:
-        if len(ranked) > 1:
-            candidate_name = ranked[1][0]
+        if len(ranked_valid) > 1:
+            candidate_name = ranked_valid[1][0]
             return candidate_name, "Second-highest energy — forced switch after 3 consecutive segments on this camera"
 
+    if debug_scores:
+        scored = ", ".join(f"{name}={value:.6f}" for name, value in ranked)
+        print(f"DEBUG segment [{start_time:.3f},{end_time:.3f}] scores: {scored}")
     return candidate_name, "Highest audio energy in segment window"
 
 
@@ -92,23 +131,37 @@ def build_edl(
     min_segment: float = 5.0,
     max_segment: float = 10.0,
     video_dir: Optional[Path] = None,
+    debug_scores: bool = False,
 ) -> List[Dict[str, Any]]:
     """Generate an EDL that switches cameras based on segment audio energy and sync offsets."""
     if not offsets:
         raise ValueError("No offsets supplied")
 
     performance_window = offsets.get("performance_window")
-    if not performance_window:
-        raise ValueError("Offsets JSON must include a performance_window")
+    if performance_window:
+        performance_start = float(performance_window["start_sec"])
+        performance_end = float(performance_window["end_sec"])
+    else:
+        camera_windows = [
+            (float(info.get("performance_start_sec", 0.0)), float(info.get("performance_end_sec", 0.0)))
+            for name, info in offsets.items()
+            if name != "performance_window"
+        ]
+        if camera_windows and any(end > start for start, end in camera_windows):
+            performance_start = min(start for start, end in camera_windows if end > start)
+            performance_end = max(end for start, end in camera_windows if end > start)
+        else:
+            performance_start = 0.0
+            if duration_sec is not None and duration_sec > 0:
+                performance_end = performance_start + float(duration_sec)
+            else:
+                performance_end = performance_start + DEFAULT_HIGHLIGHT_DURATION
 
-    highlight_duration = highlight_duration if highlight_duration is not None else duration_sec
     if highlight_duration is None:
-        highlight_duration = DEFAULT_HIGHLIGHT_DURATION
-
-    highlight_duration = max(MIN_HIGHLIGHT_DURATION, min(MAX_HIGHLIGHT_DURATION, highlight_duration))
-    request_duration = float(highlight_duration)
-    performance_start = float(performance_window["start_sec"])
-    performance_end = float(performance_window["end_sec"])
+        request_duration = float(duration_sec) if duration_sec is not None else DEFAULT_HIGHLIGHT_DURATION
+    else:
+        request_duration = float(highlight_duration)
+        request_duration = max(MIN_HIGHLIGHT_DURATION, min(MAX_HIGHLIGHT_DURATION, request_duration))
     performance_duration = performance_end - performance_start
     if performance_duration <= 0:
         raise ValueError("Detected performance window has non-positive duration")
@@ -135,15 +188,18 @@ def build_edl(
             previous_camera=previous_camera,
             consecutive_count=previous_streak,
             round_robin_index=round_robin_index,
+            debug_scores=debug_scores,
         )
 
         camera_info = offsets.get(camera_name, {})
-        camera_start = camera_info.get("performance_start_sec", performance_start)
-        camera_end = camera_info.get("performance_end_sec", performance_end)
-        if segment_end > camera_end:
-            segment_end = camera_end
-        if current_time < camera_start:
-            current_time = camera_start
+        camera_source_start = float(camera_info.get("performance_start_sec", performance_start))
+        camera_source_end = float(camera_info.get("performance_end_sec", performance_end))
+        camera_timeline_start = 0.0
+        camera_timeline_end = max(0.0, camera_source_end - camera_source_start)
+        if segment_end > camera_timeline_end:
+            segment_end = camera_timeline_end
+        if current_time < camera_timeline_start:
+            current_time = camera_timeline_start
             continue
         if segment_end <= current_time:
             break
@@ -193,6 +249,11 @@ def parse_args() -> argparse.Namespace:
         default=DEFAULT_HIGHLIGHT_DURATION,
         help="Duration of the selected highlight in seconds (60-180)",
     )
+    parser.add_argument(
+        "--debug-scores",
+        action="store_true",
+        help="Print raw energy scores for each camera and segment during EDL generation",
+    )
     return parser.parse_args()
 
 
@@ -202,7 +263,12 @@ def main() -> None:
     output_path = Path(args.output)
 
     offsets = load_offsets(offsets_path)
-    edl = build_edl(offsets, highlight_duration=args.highlight_duration, video_dir=DEFAULT_VIDEO_DIR)
+    edl = build_edl(
+        offsets,
+        highlight_duration=args.highlight_duration,
+        video_dir=DEFAULT_VIDEO_DIR,
+        debug_scores=args.debug_scores,
+    )
     write_edl(output_path, edl)
     print(f"Wrote {len(edl)} EDL entries to {output_path}")
 

@@ -56,6 +56,7 @@ def extract_audio_signal(
         audio = clip.subclipped(window_start, window_end)
         waveform = audio.to_soundarray(fps=sample_rate, buffersize=sample_rate)
         if waveform.ndim > 1:
+            # Downmix multichannel audio (e.g. AC-3 5.1 with 6 channels) to mono.
             waveform = np.mean(waveform, axis=1)
         return waveform.astype(np.float32)
     finally:
@@ -228,16 +229,24 @@ def compute_offsets(video_paths: List[Path]) -> Dict[str, Dict[str, float]]:
     global_end = max(item["performance_end_sec"] for item in temp_results.values())
 
     offsets: Dict[str, Dict[str, float]] = {}
+    durations = []
     for camera_name, result in temp_results.items():
         offsets[camera_name] = {
             "offset_sec": float(result["performance_start_sec"] - global_start),
             **result,
         }
+        if camera_name != reference_path.name:
+            durations.append(result["performance_end_sec"] - result["performance_start_sec"])
+
+    if durations:
+        duration_sec = float(np.median(durations))
+    else:
+        duration_sec = float(max(0.0, global_end - global_start))
 
     offsets["performance_window"] = {
         "start_sec": float(global_start),
-        "end_sec": float(global_end),
-        "duration_sec": float(max(0.0, global_end - global_start)),
+        "end_sec": float(global_start + duration_sec),
+        "duration_sec": float(duration_sec),
     }
     return offsets
 

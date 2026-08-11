@@ -2,11 +2,11 @@
   {
     "start_time": 0.0,
     "end_time": 5.0,
-    "selected_camera": "teacher_demo_final.mp4",
+    "selected_camera": "camera2_front_right.mp4",
     "reason_for_selection": "Highest audio energy in segment window",
     "transition": "fade",
     "lower_third": {
-      "text": "Camera teacher_demo_final.mp4",
+      "text": "Camera camera2_front_right.mp4",
       "position": "top-left",
       "font_size": 24
     }
@@ -14,11 +14,11 @@
   {
     "start_time": 5.0,
     "end_time": 12.5,
-    "selected_camera": "teacher_demo_final.mp4",
+    "selected_camera": "camera2_front_right.mp4",
     "reason_for_selection": "Highest audio energy in segment window",
     "transition": "cut",
     "lower_third": {
-      "text": "Camera teacher_demo_final.mp4",
+      "text": "Camera camera2_front_right.mp4",
       "position": "top-left",
       "font_size": 24
     }
@@ -26,11 +26,11 @@
   {
     "start_time": 12.5,
     "end_time": 17.5,
-    "selected_camera": "teacher_demo_final.mp4",
+    "selected_camera": "camera2_front_right.mp4",
     "reason_for_selection": "Highest audio energy in segment window",
     "transition": "fade",
     "lower_third": {
-      "text": "Camera teacher_demo_final.mp4",
+      "text": "Camera camera2_front_right.mp4",
       "position": "top-left",
       "font_size": 24
     }
@@ -38,11 +38,11 @@
   {
     "start_time": 17.5,
     "end_time": 25.0,
-    "selected_camera": "Demo.mp4",
-    "reason_for_selection": "Second-highest energy \u2014 forced switch after 3 consecutive segments on this camera",
+    "selected_camera": "camera4_front_left.mp4",
+    "reason_for_selection": "Highest audio energy in segment window",
     "transition": "cut",
     "lower_third": {
-      "text": "Camera Demo.mp4",
+      "text": "Camera camera4_front_left.mp4",
       "position": "top-left",
       "font_size": 24
     }
@@ -50,11 +50,191 @@
   {
     "start_time": 25.0,
     "end_time": 30.0,
-    "selected_camera": "teacher_demo_final.mp4",
+    "selected_camera": "camera4_front_left.mp4",
     "reason_for_selection": "Highest audio energy in segment window",
     "transition": "fade",
     "lower_third": {
-      "text": "Camera teacher_demo_final.mp4",
+      "text": "Camera camera4_front_left.mp4",
+      "position": "top-left",
+      "font_size": 24
+    }
+  },
+  {
+    "start_time": 30.0,
+    "end_time": 37.5,
+    "selected_camera": "camera4_front_left.mp4",
+    "reason_for_selection": "Highest audio energy in segment window",
+    "transition": "cut",
+    "lower_third": {
+      "text": "Camera camera4_front_left.mp4",
+      "position": "top-left",
+      "font_size": 24
+    }
+  },
+  {
+    "start_time": 37.5,
+    "end_time": 42.5,
+    "selected_camera": "camera1_center_closeup.mp4",
+    "reason_for_selection": "Second-highest energy \u2014 forced switch after 3 consecutive segments on this camera",
+    "transition": "fade",
+    "lower_third": {
+      "text": "Camera camera1_center_closeup.mp4",
+      "position": "top-left",
+      "font_size": 24
+    }
+  },
+  {
+    "start_time": 42.5,
+    "end_time": 50.0,
+    "selected_camera": "camera4_front_left.mp4",
+    "reason_for_selection": "Highest audio energy in segment window",
+    "transition": "cut",
+    "lower_third": {
+      "text": "Camera camera4_front_left.mp4",
+      "position": "top-left",
+      "font_size": 24
+    }
+  },
+  {
+    "start_time": 50.0,
+    "end_time": 55.0,
+    "selected_camera": "camera4_front_left.mp4",
+    "reason_for_selection": "Highest audio energy in segment window",
+    "transition": "fade",
+    "lower_third": {
+      "text": "Camera camera4_front_left.mp4",
+      "position": "top-left",
+      "font_size": 24
+    }
+  },
+  {
+    "start_time": 55.0,
+    "end_time": 62.5,
+    "selected_camera": "camera4_front_left.mp4",
+    "reason_for_selection": "Highest audio energy in segment window",
+    "transition": "cut",
+    "lower_third": {
+      "text": "Camera camera4_front_left.mp4",
+      "position": "top-left",
+      "font_size": 24
+    }
+  },
+  {
+    "start_time": 62.5,
+    "end_time": 67.5,
+    "selected_camera": "camera1_center_closeup.mp4",
+    "reason_for_selection": "Second-highest energy \u2014 forced switch after 3 consecutive segments on this camera",
+    "transition": "fade",
+    "lower_third": {
+      "text": "Camera camera1_center_closeup.mp4",
+      "position": "top-left",
+      "font_size": 24
+    }
+  },
+  {
+    "start_time": 67.5,
+    "end_time": 75.0,
+    "selected_camera": "camera4_front_left.mp4",
+    "reason_for_selection": "Highest audio energy in segment window",
+    "transition": "cut",
+    "lower_third": {
+      "text": "Camera camera4_front_left.mp4",
+      "position": "top-left",
+      "font_size": 24
+    }
+  },
+  {
+    "start_time": 75.0,
+    "end_time": 80.0,
+    "selected_camera": "camera4_front_left.mp4",
+    "reason_for_selection": "Highest audio energy in segment window",
+    "transition": "fade",
+    "lower_third": {
+      "text": "Camera camera4_front_left.mp4",
+      "position": "top-left",
+      "font_size": 24
+    }
+  },
+  {
+    "start_time": 80.0,
+    "end_time": 87.5,
+    "selected_camera": "camera4_front_left.mp4",
+    "reason_for_selection": "Highest audio energy in segment window",
+    "transition": "cut",
+    "lower_third": {
+      "text": "Camera camera4_front_left.mp4",
+      "position": "top-left",
+      "font_size": 24
+    }
+  },
+  {
+    "start_time": 87.5,
+    "end_time": 92.5,
+    "selected_camera": "camera1_center_closeup.mp4",
+    "reason_for_selection": "Second-highest energy \u2014 forced switch after 3 consecutive segments on this camera",
+    "transition": "fade",
+    "lower_third": {
+      "text": "Camera camera1_center_closeup.mp4",
+      "position": "top-left",
+      "font_size": 24
+    }
+  },
+  {
+    "start_time": 92.5,
+    "end_time": 100.0,
+    "selected_camera": "camera4_front_left.mp4",
+    "reason_for_selection": "Highest audio energy in segment window",
+    "transition": "cut",
+    "lower_third": {
+      "text": "Camera camera4_front_left.mp4",
+      "position": "top-left",
+      "font_size": 24
+    }
+  },
+  {
+    "start_time": 100.0,
+    "end_time": 105.0,
+    "selected_camera": "camera4_front_left.mp4",
+    "reason_for_selection": "Highest audio energy in segment window",
+    "transition": "fade",
+    "lower_third": {
+      "text": "Camera camera4_front_left.mp4",
+      "position": "top-left",
+      "font_size": 24
+    }
+  },
+  {
+    "start_time": 105.0,
+    "end_time": 112.5,
+    "selected_camera": "camera4_front_left.mp4",
+    "reason_for_selection": "Highest audio energy in segment window",
+    "transition": "cut",
+    "lower_third": {
+      "text": "Camera camera4_front_left.mp4",
+      "position": "top-left",
+      "font_size": 24
+    }
+  },
+  {
+    "start_time": 112.5,
+    "end_time": 117.5,
+    "selected_camera": "camera1_center_closeup.mp4",
+    "reason_for_selection": "Second-highest energy \u2014 forced switch after 3 consecutive segments on this camera",
+    "transition": "fade",
+    "lower_third": {
+      "text": "Camera camera1_center_closeup.mp4",
+      "position": "top-left",
+      "font_size": 24
+    }
+  },
+  {
+    "start_time": 117.5,
+    "end_time": 120.0,
+    "selected_camera": "camera4_front_left.mp4",
+    "reason_for_selection": "Highest audio energy in segment window",
+    "transition": "cut",
+    "lower_third": {
+      "text": "Camera camera4_front_left.mp4",
       "position": "top-left",
       "font_size": 24
     }
