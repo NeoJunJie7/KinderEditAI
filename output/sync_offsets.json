@@ -1,18 +1,43 @@
 {
-  "Demo.mp4": {
+  "camera1_center_closeup.mp4": {
+    "offset_sec": 88.848,
+    "global_offset_sec": 88.848,
+    "performance_start_sec": 88.848,
+    "performance_end_sec": 289.0,
+    "confidence": 69.39464339384452,
+    "method": "correlation alignment",
+    "reference": "camera2_front_right.mp4"
+  },
+  "camera2_front_right.mp4": {
     "offset_sec": 0.0,
-    "reference": "Demo.mp4"
+    "global_offset_sec": 0.0,
+    "performance_start_sec": 0.0,
+    "performance_end_sec": 24.62,
+    "confidence": 1.0,
+    "method": "reference",
+    "reference": "camera2_front_right.mp4"
   },
-  "final_v1.mp4": {
-    "offset_sec": 2.3666875,
-    "reference": "Demo.mp4"
+  "camera3_center_wide.mp4": {
+    "offset_sec": 292.16725,
+    "global_offset_sec": 292.16725,
+    "performance_start_sec": 292.16725,
+    "performance_end_sec": 492.0,
+    "confidence": 84.91513907649926,
+    "method": "correlation alignment",
+    "reference": "camera2_front_right.mp4"
   },
-  "final_v2.mp4": {
-    "offset_sec": -1.089125,
-    "reference": "Demo.mp4"
+  "camera4_front_left.mp4": {
+    "offset_sec": 3.675,
+    "global_offset_sec": 3.675,
+    "performance_start_sec": 3.675,
+    "performance_end_sec": 184.0,
+    "confidence": 35.10126952630313,
+    "method": "correlation alignment",
+    "reference": "camera2_front_right.mp4"
   },
-  "teacher_demo_final.mp4": {
-    "offset_sec": -0.981625,
-    "reference": "Demo.mp4"
+  "performance_window": {
+    "start_sec": 0.0,
+    "end_sec": 492.0,
+    "duration_sec": 492.0
   }
 }

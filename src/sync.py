@@ -17,6 +17,10 @@ DEFAULT_ONSET_STEP_SEC = 0.5
 DEFAULT_ONSET_THRESHOLD_FACTOR = 4.0
 DEFAULT_ONSET_SUSTAIN_SEC = 3.0
 DEFAULT_ALIGNMENT_CONFIDENCE_THRESHOLD = 8.0
+DEFAULT_PERFORMANCE_DURATION = 220.0
+DEFAULT_PERFORMANCE_BUFFER = 10.0
+MIN_PERFORMANCE_DURATION = 180.0
+MAX_PERFORMANCE_DURATION = DEFAULT_PERFORMANCE_DURATION + DEFAULT_PERFORMANCE_BUFFER
 
 
 def select_video_files(input_dir: Path, count: int = 4) -> List[Path]:
@@ -112,6 +116,45 @@ def detect_energy_window(
     return 0.0, float(waveform.shape[0]) / sample_rate
 
 
+def detect_performance_end(
+    waveform: np.ndarray,
+    performance_start: float,
+    sample_rate: int = DEFAULT_ALIGNMENT_SAMPLE_RATE,
+    window_sec: float = DEFAULT_ONSET_WINDOW_SEC,
+    step_sec: float = DEFAULT_ONSET_STEP_SEC,
+    quiet_factor: float = 1.5,
+    end_sustain_sec: float = 5.0,
+) -> float:
+    if waveform.size == 0 or performance_start >= float(waveform.shape[0]) / sample_rate:
+        return performance_start
+
+    window = max(1, int(window_sec * sample_rate))
+    step = max(1, int(step_sec * sample_rate))
+    energy = []
+    positions = []
+    for start in range(0, max(1, waveform.shape[0] - window + 1), step):
+        segment = waveform[start : start + window]
+        energy.append(float(np.sqrt(np.mean(np.square(segment)))))
+        positions.append(start)
+
+    if not energy:
+        return min(performance_start + DEFAULT_PERFORMANCE_DURATION + DEFAULT_PERFORMANCE_BUFFER, float(waveform.shape[0]) / sample_rate)
+
+    energy = np.array(energy, dtype=np.float64)
+    baseline = float(np.median(energy[: max(1, len(energy) // 10)]))
+    quiet_threshold = max(baseline * quiet_factor, 1e-4)
+    start_index = next((i for i, pos in enumerate(positions) if pos / sample_rate >= performance_start), 0)
+    sustain_slots = max(1, int(math.ceil(end_sustain_sec / step_sec)))
+
+    for idx in range(start_index, len(energy) - sustain_slots + 1):
+        if np.all(energy[idx : idx + sustain_slots] <= quiet_threshold):
+            end_sec = min((positions[idx] + window) / sample_rate, float(waveform.shape[0]) / sample_rate)
+            if end_sec > performance_start + MIN_PERFORMANCE_DURATION:
+                return float(end_sec)
+
+    return min(performance_start + DEFAULT_PERFORMANCE_DURATION + DEFAULT_PERFORMANCE_BUFFER, float(waveform.shape[0]) / sample_rate)
+
+
 def estimate_alignment(reference: np.ndarray, target: np.ndarray, sample_rate: int = DEFAULT_ALIGNMENT_SAMPLE_RATE) -> Tuple[float, float]:
     if len(reference) == 0 or len(target) == 0 or len(target) < len(reference):
         return 0.0, 0.0
@@ -158,21 +201,27 @@ def compute_offsets(video_paths: List[Path]) -> Dict[str, Dict[str, float]]:
 
         if video_path == reference_path:
             performance_start = reference_onset_start
-            onset_end = reference_onset_end
-            confidence = 1.0
             method = "reference"
+            confidence = 1.0
+
+        # Determine performance end using eventual energy decay or fixed duration.
+        performance_end = detect_performance_end(
+            target_audio,
+            performance_start,
+            sample_rate=DEFAULT_ALIGNMENT_SAMPLE_RATE,
+        )
 
         temp_results[video_path.name] = {
             "global_offset_sec": float(performance_start),
             "performance_start_sec": float(performance_start),
-            "performance_end_sec": float(onset_end),
+            "performance_end_sec": float(performance_end),
             "confidence": float(confidence),
             "method": method,
             "reference": reference_path.name,
         }
         print(
             f"{video_path.name}: performance_start={format_time(performance_start)}, "
-            f"end={format_time(onset_end)}, confidence={confidence:.1f}, method={method}"
+            f"performance_end={format_time(performance_end)}, confidence={confidence:.1f}, method={method}"
         )
 
     global_start = min(item["performance_start_sec"] for item in temp_results.values())
@@ -218,6 +267,8 @@ def main() -> None:
     write_offsets(output_path, offsets)
     print(f"Wrote {len(offsets)} offsets to {output_path}")
     for name, payload in offsets.items():
+        if name == "performance_window":
+            continue
         print(f"{name}: {payload['offset_sec']:.3f}s")
 
 
