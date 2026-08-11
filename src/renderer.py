@@ -54,12 +54,17 @@ def build_clips(edl: List[Dict[str, Any]], video_map: Dict[str, Path], offsets: 
             performance_start = float(offsets[camera_name].get("performance_start_sec", 0.0))
             performance_end = float(offsets[camera_name].get("performance_end_sec", clip.duration))
 
-        clip_start = max(0.0, min(start_time - offset_sec, clip.duration))
-        clip_end = max(clip_start, min(end_time - offset_sec, clip.duration))
+        # Offsets are additive: convert timeline time -> source file time by adding offset
+        clip_start = max(0.0, min(start_time + offset_sec, clip.duration))
+        clip_end = max(clip_start, min(end_time + offset_sec, clip.duration))
+        # Constrain to camera's detected performance window (in source file coordinates)
         clip_start = max(performance_start, clip_start)
         clip_end = min(performance_end, clip_end)
 
         if clip_start >= clip_end:
+            print(
+                f"Warning: segment for '{camera_name}' [{start_time},{end_time}] resolved to invalid clip range [{clip_start},{clip_end}], skipping"
+            )
             clip.close()
             continue
 
@@ -114,12 +119,12 @@ def render_video(edl_path: Path, output_path: Path, video_dir: Path = DEFAULT_VI
         TextClip(text="Thank you!", font_size=40, color="white")
         .with_position(("center", "center"))
         .with_duration(2.0)
+        .with_start(3.0 + final_clip.duration)
     )
     shifted_final_clip = final_clip.with_start(3.0)
-    final_audio = shifted_final_clip.audio
+    # Build the full composite first so audio tracks keep their timeline offsets (title silence preserved)
     final_video = CompositeVideoClip([title_screen, shifted_final_clip, closing_screen])
-    if final_audio is not None:
-        final_video = final_video.with_audio(final_audio)
+    # final_video.audio will be the composite audio with correct timing; no manual reattach needed
     final_video = final_video.with_duration(final_clip.duration + 5.0)
     final_video.write_videofile(str(output_path), codec="libx264", fps=24, audio_codec="aac")
 
