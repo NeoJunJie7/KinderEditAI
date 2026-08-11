@@ -2,11 +2,11 @@
   {
     "start_time": 0.0,
     "end_time": 5.0,
-    "selected_camera": "Demo.mp4",
-    "reason_for_selection": "Best alignment with the reference timeline and stable framing",
+    "selected_camera": "teacher_demo_final.mp4",
+    "reason_for_selection": "Highest audio energy in segment window",
     "transition": "fade",
     "lower_third": {
-      "text": "Camera Demo.mp4",
+      "text": "Camera teacher_demo_final.mp4",
       "position": "top-left",
       "font_size": 24
     }
@@ -14,11 +14,11 @@
   {
     "start_time": 5.0,
     "end_time": 12.5,
-    "selected_camera": "Demo.mp4",
-    "reason_for_selection": "Best alignment with the reference timeline and stable framing",
+    "selected_camera": "teacher_demo_final.mp4",
+    "reason_for_selection": "Highest audio energy in segment window",
     "transition": "cut",
     "lower_third": {
-      "text": "Camera Demo.mp4",
+      "text": "Camera teacher_demo_final.mp4",
       "position": "top-left",
       "font_size": 24
     }
@@ -26,11 +26,11 @@
   {
     "start_time": 12.5,
     "end_time": 17.5,
-    "selected_camera": "Demo.mp4",
-    "reason_for_selection": "Best alignment with the reference timeline and stable framing",
+    "selected_camera": "teacher_demo_final.mp4",
+    "reason_for_selection": "Highest audio energy in segment window",
     "transition": "fade",
     "lower_third": {
-      "text": "Camera Demo.mp4",
+      "text": "Camera teacher_demo_final.mp4",
       "position": "top-left",
       "font_size": 24
     }
@@ -39,7 +39,7 @@
     "start_time": 17.5,
     "end_time": 25.0,
     "selected_camera": "Demo.mp4",
-    "reason_for_selection": "Best alignment with the reference timeline and stable framing",
+    "reason_for_selection": "Second-highest energy \u2014 forced switch after 3 consecutive segments on this camera",
     "transition": "cut",
     "lower_third": {
       "text": "Camera Demo.mp4",
@@ -50,11 +50,11 @@
   {
     "start_time": 25.0,
     "end_time": 30.0,
-    "selected_camera": "Demo.mp4",
-    "reason_for_selection": "Best alignment with the reference timeline and stable framing",
+    "selected_camera": "teacher_demo_final.mp4",
+    "reason_for_selection": "Highest audio energy in segment window",
     "transition": "fade",
     "lower_third": {
-      "text": "Camera Demo.mp4",
+      "text": "Camera teacher_demo_final.mp4",
       "position": "top-left",
       "font_size": 24
     }

@@ -1,7 +1,7 @@
 import argparse
 import json
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Tuple
 
 from moviepy import CompositeVideoClip, ColorClip, TextClip, VideoFileClip, concatenate_videoclips
 from moviepy.video import fx
@@ -36,10 +36,12 @@ def build_clips(edl: List[Dict[str, Any]], video_map: Dict[str, Path]) -> List[T
             continue
         video_path = video_map.get(camera_name)
         if not video_path:
+            print(f"Warning: missing camera source '{camera_name}' for segment {len(clips)}")
             continue
         try:
             clip = VideoFileClip(str(video_path))
-        except FileNotFoundError:
+        except FileNotFoundError as exc:
+            print(f"Warning: failed to load '{camera_name}': {exc}")
             continue
 
         start_time = float(entry.get("start_time", 0.0))
@@ -74,19 +76,26 @@ def render_video(edl_path: Path, output_path: Path, video_dir: Path = DEFAULT_VI
         raise ValueError("No clips were generated from the EDL")
 
     rendered_clips = []
-    for clip, entry in clips_with_meta:
-        lower_third = entry.get("lower_third", {})
-        overlay_text = lower_third.get("text", "Graduation Moment")
-        overlay = (
-            TextClip(text=overlay_text, font_size=22, color="white")
-            .with_position(("left", "top"))
-            .with_duration(clip.duration)
-        )
-        clip = clip.with_position("center")
-        clip = CompositeVideoClip([clip, overlay])
-        if clip.duration > 1.0:
-            clip = fx.CrossFadeIn(1.0).apply(clip)
-        rendered_clips.append(clip)
+    for clip_index, (clip, entry) in enumerate(clips_with_meta):
+        try:
+            lower_third = entry.get("lower_third", {})
+            overlay_text = lower_third.get("text", "Graduation Moment")
+            overlay = (
+                TextClip(text=overlay_text, font_size=22, color="white")
+                .with_position(("left", "top"))
+                .with_duration(clip.duration)
+            )
+            segment_audio = clip.audio
+            clip = clip.with_position("center")
+            composite_clip = CompositeVideoClip([clip, overlay])
+            if segment_audio is not None:
+                composite_clip = composite_clip.with_audio(segment_audio)
+            if composite_clip.duration > 1.0:
+                composite_clip = fx.CrossFadeIn(1.0).apply(composite_clip)
+            rendered_clips.append(composite_clip)
+        except Exception as exc:  # pragma: no cover - defensive logging for real rendering failures
+            print(f"Warning: failed to render segment {clip_index} for camera {entry.get('selected_camera')}: {exc}")
+            continue
 
     final_clip = concatenate_videoclips(rendered_clips, method="compose")
     title_screen = add_title_screen(3.0, final_clip.size)
@@ -95,9 +104,21 @@ def render_video(edl_path: Path, output_path: Path, video_dir: Path = DEFAULT_VI
         .with_position(("center", "center"))
         .with_duration(2.0)
     )
-    final_video = CompositeVideoClip([title_screen, final_clip.with_start(3.0), closing_screen.with_start(final_clip.duration + 3.0)])
+    shifted_final_clip = final_clip.with_start(3.0)
+    final_audio = shifted_final_clip.audio
+    final_video = CompositeVideoClip([title_screen, shifted_final_clip, closing_screen])
+    if final_audio is not None:
+        final_video = final_video.with_audio(final_audio)
     final_video = final_video.with_duration(final_clip.duration + 5.0)
     final_video.write_videofile(str(output_path), codec="libx264", fps=24, audio_codec="aac")
+
+    distinct_cameras = {entry.get("selected_camera") for _, entry in clips_with_meta if entry.get("selected_camera")}
+    camera_switches = sum(
+        1 for index in range(1, len(clips_with_meta)) if clips_with_meta[index - 1][1].get("selected_camera") != clips_with_meta[index][1].get("selected_camera")
+    )
+    print(f"Render summary: total_duration={final_video.duration:.2f}s, distinct_cameras={len(distinct_cameras)}, camera_switches={camera_switches}, has_audio={final_video.audio is not None}")
+    if final_video.audio is None:
+        raise AssertionError("Rendered video has no audio track")
     return output_path
 
 

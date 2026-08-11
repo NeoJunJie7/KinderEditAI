@@ -3,7 +3,7 @@ import json
 import math
 import os
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 from moviepy.audio.io.AudioFileClip import AudioFileClip
@@ -25,12 +25,25 @@ def select_video_files(input_dir: Path, count: int = 4) -> List[Path]:
     return videos[:count]
 
 
-def extract_audio_signal(video_path: Path, sample_rate: int = 16000, duration: float = 30.0) -> np.ndarray:
-    """Extract a mono audio waveform from a video file."""
+def extract_audio_signal(
+    video_path: Path,
+    sample_rate: int = 16000,
+    duration: Optional[float] = None,
+    start_time: float = 0.0,
+    end_time: Optional[float] = None,
+) -> np.ndarray:
+    """Extract a mono audio waveform from a video file window."""
     clip = AudioFileClip(str(video_path))
     try:
-        clip_duration = min(duration, clip.duration)
-        audio = clip.subclipped(0, clip_duration)
+        if duration is not None:
+            end_time = start_time + duration
+        if end_time is None:
+            end_time = clip.duration
+        window_start = max(0.0, min(float(start_time), clip.duration))
+        window_end = max(window_start, min(float(end_time), clip.duration))
+        if window_end <= window_start:
+            return np.zeros(0, dtype=np.float32)
+        audio = clip.subclipped(window_start, window_end)
         waveform = audio.to_soundarray(fps=sample_rate, buffersize=sample_rate)
         if waveform.ndim > 1:
             waveform = np.mean(waveform, axis=1)
