@@ -16,6 +16,9 @@ DEFAULT_OUTPUT_PATH = Path("output") / "generated_edl.json"
 DEFAULT_VIDEO_DIR = Path("starter-pack")
 MIN_ENERGY_THRESHOLD = 0.02
 MAX_CONSECUTIVE_SEGMENTS = 3
+DEFAULT_HIGHLIGHT_DURATION = 90.0
+MIN_HIGHLIGHT_DURATION = 60.0
+MAX_HIGHLIGHT_DURATION = 180.0
 
 
 def load_offsets(path: Path) -> Dict[str, Dict[str, float]]:
@@ -45,7 +48,7 @@ def _pick_camera(
     round_robin_index: int = 0,
 ) -> Tuple[str, str]:
     """Select the best camera for a time window by comparing audio energy scores."""
-    cameras = list(offsets.keys())
+    cameras = [name for name in offsets.keys() if name != "performance_window"]
     if not cameras:
         raise ValueError("No cameras available to build an EDL")
 
@@ -84,7 +87,8 @@ def _pick_camera(
 
 def build_edl(
     offsets: Dict[str, Dict[str, float]],
-    duration_sec: float = 30.0,
+    duration_sec: Optional[float] = None,
+    highlight_duration: Optional[float] = None,
     min_segment: float = 5.0,
     max_segment: float = 10.0,
     video_dir: Optional[Path] = None,
@@ -93,14 +97,35 @@ def build_edl(
     if not offsets:
         raise ValueError("No offsets supplied")
 
+    performance_window = offsets.get("performance_window")
+    if not performance_window:
+        raise ValueError("Offsets JSON must include a performance_window")
+
+    highlight_duration = highlight_duration if highlight_duration is not None else duration_sec
+    if highlight_duration is None:
+        highlight_duration = DEFAULT_HIGHLIGHT_DURATION
+
+    highlight_duration = max(MIN_HIGHLIGHT_DURATION, min(MAX_HIGHLIGHT_DURATION, highlight_duration))
+    request_duration = float(highlight_duration)
+    performance_start = float(performance_window["start_sec"])
+    performance_end = float(performance_window["end_sec"])
+    performance_duration = performance_end - performance_start
+    if performance_duration <= 0:
+        raise ValueError("Detected performance window has non-positive duration")
+
+    if request_duration > performance_duration:
+        request_duration = performance_duration
+
     segments: List[Dict[str, Any]] = []
-    current_time = 0.0
+    current_time = performance_start
+    end_target = performance_start + request_duration
     previous_camera: Optional[str] = None
     previous_streak = 0
     round_robin_index = 0
-    while current_time < duration_sec:
+
+    while current_time < end_target:
         segment_length = min(max_segment, min_segment + (len(segments) % 2) * 2.5)
-        segment_end = min(duration_sec, current_time + segment_length)
+        segment_end = min(end_target, current_time + segment_length)
         camera_name, reason = _pick_camera(
             offsets,
             current_time,
@@ -111,12 +136,25 @@ def build_edl(
             consecutive_count=previous_streak,
             round_robin_index=round_robin_index,
         )
+
+        camera_info = offsets.get(camera_name, {})
+        camera_start = camera_info.get("performance_start_sec", performance_start)
+        camera_end = camera_info.get("performance_end_sec", performance_end)
+        if segment_end > camera_end:
+            segment_end = camera_end
+        if current_time < camera_start:
+            current_time = camera_start
+            continue
+        if segment_end <= current_time:
+            break
+
         if camera_name == previous_camera:
             previous_streak += 1
         else:
             previous_streak = 1
         previous_camera = camera_name
-        round_robin_index = (round_robin_index + 1) % len(offsets)
+        camera_count = max(1, len([k for k in offsets.keys() if k != "performance_window"]))
+        round_robin_index = (round_robin_index + 1) % camera_count
 
         lower_third = {
             "text": f"Camera {camera_name}",
@@ -149,7 +187,12 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Generate an EDL JSON file from sync offsets")
     parser.add_argument("--offsets", default=str(DEFAULT_OFFSETS_PATH), help="Path to the sync offsets JSON file")
     parser.add_argument("--output", default=str(DEFAULT_OUTPUT_PATH), help="Path to write the generated EDL JSON")
-    parser.add_argument("--duration", type=float, default=30.0, help="Total duration of the highlight in seconds")
+    parser.add_argument(
+        "--highlight-duration",
+        type=float,
+        default=DEFAULT_HIGHLIGHT_DURATION,
+        help="Duration of the selected highlight in seconds (60-180)",
+    )
     return parser.parse_args()
 
 
@@ -159,7 +202,7 @@ def main() -> None:
     output_path = Path(args.output)
 
     offsets = load_offsets(offsets_path)
-    edl = build_edl(offsets, duration_sec=args.duration, video_dir=DEFAULT_VIDEO_DIR)
+    edl = build_edl(offsets, highlight_duration=args.highlight_duration, video_dir=DEFAULT_VIDEO_DIR)
     write_edl(output_path, edl)
     print(f"Wrote {len(edl)} EDL entries to {output_path}")
 

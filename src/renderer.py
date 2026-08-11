@@ -1,7 +1,7 @@
 import argparse
 import json
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from moviepy import CompositeVideoClip, ColorClip, TextClip, VideoFileClip, concatenate_videoclips
 from moviepy.video import fx
@@ -28,7 +28,7 @@ def resolve_video_path(video_name: str, video_dir: Path) -> Path:
     raise FileNotFoundError(f"Could not find video: {video_name}")
 
 
-def build_clips(edl: List[Dict[str, Any]], video_map: Dict[str, Path]) -> List[Tuple[VideoFileClip, Dict[str, Any]]]:
+def build_clips(edl: List[Dict[str, Any]], video_map: Dict[str, Path], offsets: Optional[Dict[str, Dict[str, float]]] = None) -> List[Tuple[VideoFileClip, Dict[str, Any]]]:
     clips: List[Tuple[VideoFileClip, Dict[str, Any]]] = []
     for entry in edl:
         camera_name = entry.get("selected_camera")
@@ -46,13 +46,24 @@ def build_clips(edl: List[Dict[str, Any]], video_map: Dict[str, Path]) -> List[T
 
         start_time = float(entry.get("start_time", 0.0))
         end_time = float(entry.get("end_time", clip.duration))
-        if start_time >= clip.duration:
+        offset_sec = 0.0
+        performance_start = 0.0
+        performance_end = clip.duration
+        if offsets and camera_name in offsets:
+            offset_sec = float(offsets[camera_name].get("offset_sec", 0.0))
+            performance_start = float(offsets[camera_name].get("performance_start_sec", 0.0))
+            performance_end = float(offsets[camera_name].get("performance_end_sec", clip.duration))
+
+        clip_start = max(0.0, min(start_time - offset_sec, clip.duration))
+        clip_end = max(clip_start, min(end_time - offset_sec, clip.duration))
+        clip_start = max(performance_start, clip_start)
+        clip_end = min(performance_end, clip_end)
+
+        if clip_start >= clip_end:
             clip.close()
             continue
 
-        start_time = max(0.0, min(start_time, clip.duration))
-        end_time = max(start_time, min(end_time, clip.duration))
-        clip = clip.subclipped(start_time, end_time)
+        clip = clip.subclipped(clip_start, clip_end)
         clips.append((clip, entry))
     return clips
 
@@ -67,10 +78,10 @@ def add_title_screen(duration: float, output_size: Tuple[int, int]) -> Composite
     return CompositeVideoClip([background, title])
 
 
-def render_video(edl_path: Path, output_path: Path, video_dir: Path = DEFAULT_VIDEO_DIR) -> Path:
+def render_video(edl_path: Path, output_path: Path, video_dir: Path = DEFAULT_VIDEO_DIR, offsets: Optional[Dict[str, Dict[str, float]]] = None) -> Path:
     edl = load_edl(edl_path)
     video_map = {path.name: path for path in video_dir.glob("*.mp4")}
-    clips_with_meta = build_clips(edl, video_map)
+    clips_with_meta = build_clips(edl, video_map, offsets=offsets)
 
     if not clips_with_meta:
         raise ValueError("No clips were generated from the EDL")
@@ -132,7 +143,15 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
-    output_path = render_video(Path(args.edl), Path(args.output), Path(args.video_dir))
+    offsets_path = Path("output") / "sync_offsets.json"
+    offsets = None
+    if offsets_path.exists():
+        try:
+            with offsets_path.open("r", encoding="utf-8") as handle:
+                offsets = json.load(handle)
+        except Exception:
+            offsets = None
+    output_path = render_video(Path(args.edl), Path(args.output), Path(args.video_dir), offsets=offsets)
     print(f"Wrote video to {output_path}")
 
 
