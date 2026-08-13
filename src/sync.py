@@ -1,6 +1,8 @@
 import argparse
 import json
 import math
+import numpy as np
+from numpy.typing import NDArray
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
@@ -45,6 +47,9 @@ def extract_audio_signal(
     """Extract a mono audio waveform from a video file window."""
     clip = AudioFileClip(str(video_path))
     try:
+        if clip.audio is None:
+            print(f"Warning: No audio track found for {video_path.name}. Returning empty signal.")
+            return np.zeros(0, dtype=np.float32)
         if duration is not None:
             end_time = start_time + duration
         if end_time is None:
