@@ -165,3 +165,9 @@ KinderEditAI/
 ## License
 
 For academic use as part of BTIS3053 coursework. Add a license here if distributing publicly.
+
+## Prerequisites & Requirements
+
+- Python 3.9+
+- FFmpeg installed and added to PATH
+- MoviePy / Audalign dependencies
