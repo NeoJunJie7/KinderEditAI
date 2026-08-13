@@ -11,6 +11,13 @@ DEFAULT_EDL_PATH = Path("output") / "generated_edl.json"
 DEFAULT_OUTPUT_PATH = Path("output") / "final_graduation_video.mp4"
 DEFAULT_VIDEO_DIR = Path("starter-pack")
 
+# Rendering Configuration
+TITLE_DURATION_SEC = 3.0
+CLOSING_DURATION_SEC = 2.0
+TRANSITION_DURATION_SEC = 1.0
+TITLE_FONT_SIZE = 40
+LOWER_THIRD_FONT_SIZE = 22
+
 
 def load_edl(path: Path) -> List[Dict[str, Any]]:
     # The EDL is expected to be a JSON array of segment entries, each describing a chosen camera and timing window.
@@ -81,7 +88,7 @@ def build_clips(edl: List[Dict[str, Any]], video_map: Dict[str, Path], offsets: 
 
 def add_title_screen(duration: float, output_size: Tuple[int, int]) -> CompositeVideoClip:
     title = (
-        TextClip(text="KinderEdit AI\nGraduation Highlights", font_size=40, color="white")
+        TextClip(text="KinderEdit AI\nGraduation Highlights", font_size=TITLE_FONT_SIZE, color="white")
         .with_position(("center", "center"))
         .with_duration(duration)
     )
@@ -105,7 +112,7 @@ def render_video(edl_path: Path, output_path: Path, video_dir: Path = DEFAULT_VI
             lower_third = entry.get("lower_third", {})
             overlay_text = lower_third.get("text", "Graduation Moment")
             overlay = (
-                TextClip(text=overlay_text, font_size=22, color="white")
+                TextClip(text=overlay_text, font_size=LOWER_THIRD_FONT_SIZE, color="white")
                 .with_position(("left", "top"))
                 .with_duration(clip.duration)
             )
@@ -114,8 +121,8 @@ def render_video(edl_path: Path, output_path: Path, video_dir: Path = DEFAULT_VI
             composite_clip = CompositeVideoClip([clip, overlay])
             if segment_audio is not None:
                 composite_clip = composite_clip.with_audio(segment_audio)
-            if composite_clip.duration > 1.0:
-                composite_clip = fx.CrossFadeIn(1.0).apply(composite_clip)
+            if composite_clip.duration > TRANSITION_DURATION_SEC:
+                composite_clip = fx.CrossFadeIn(TRANSITION_DURATION_SEC).apply(composite_clip)
             rendered_clips.append(composite_clip)
         except Exception as exc:  # pragma: no cover - defensive logging for real rendering failures
             print(f"Warning: failed to render segment {clip_index} for camera {entry.get('selected_camera')}: {exc}")
@@ -123,18 +130,18 @@ def render_video(edl_path: Path, output_path: Path, video_dir: Path = DEFAULT_VI
 
     # Concatenate all selected segments into a single highlight timeline in the order chosen by the EDL.
     final_clip = concatenate_videoclips(rendered_clips, method="compose")
-    title_screen = add_title_screen(3.0, final_clip.size)
+    title_screen = add_title_screen(TITLE_DURATION_SEC, final_clip.size)
     closing_screen = (
-        TextClip(text="Thank you!", font_size=40, color="white")
+        TextClip(text="Thank you!", font_size=TITLE_FONT_SIZE, color="white")
         .with_position(("center", "center"))
-        .with_duration(2.0)
-        .with_start(3.0 + final_clip.duration)
+        .with_duration(CLOSING_DURATION_SEC)
+        .with_start(TITLE_DURATION_SEC + final_clip.duration)
     )
-    shifted_final_clip = final_clip.with_start(3.0)
+    shifted_final_clip = final_clip.with_start(TITLE_DURATION_SEC)
     # Build the full composite first so audio tracks keep their timeline offsets (title silence preserved)
     final_video = CompositeVideoClip([title_screen, shifted_final_clip, closing_screen])
     # The final video duration includes the intro and closing screens, making the export timeline consistent and easy to audit.
-    final_video = final_video.with_duration(final_clip.duration + 5.0)
+    final_video = final_video.with_duration(final_clip.duration + TITLE_DURATION_SEC + CLOSING_DURATION_SEC)
     final_video.write_videofile(str(output_path), codec="libx264", fps=24, audio_codec="aac")
 
     distinct_cameras = {entry.get("selected_camera") for _, entry in clips_with_meta if entry.get("selected_camera")}
