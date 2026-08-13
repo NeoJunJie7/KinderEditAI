@@ -13,6 +13,7 @@ DEFAULT_VIDEO_DIR = Path("starter-pack")
 
 
 def load_edl(path: Path) -> List[Dict[str, Any]]:
+    # The EDL is expected to be a JSON array of segment entries, each describing a chosen camera and timing window.
     with path.open("r", encoding="utf-8") as handle:
         payload = json.load(handle)
     if not isinstance(payload, list):
@@ -21,6 +22,7 @@ def load_edl(path: Path) -> List[Dict[str, Any]]:
 
 
 def resolve_video_path(video_name: str, video_dir: Path) -> Path:
+    # Search a few sensible locations so the renderer can work whether the file is referenced by name or by absolute path.
     candidates = [video_dir / video_name, video_dir / f"{video_name}.mp4", Path(video_name)]
     for candidate in candidates:
         if candidate.exists():
@@ -29,6 +31,8 @@ def resolve_video_path(video_name: str, video_dir: Path) -> Path:
 
 
 def build_clips(edl: List[Dict[str, Any]], video_map: Dict[str, Path], offsets: Optional[Dict[str, Dict[str, float]]] = None) -> List[Tuple[VideoFileClip, Dict[str, Any]]]:
+     # Each EDL item tells us which camera was selected for a time window. Here we convert that logical segment
+     # into the actual source-file time range that needs to be loaded and trimmed for rendering.
     clips: List[Tuple[VideoFileClip, Dict[str, Any]]] = []
     for entry in edl:
         camera_name = entry.get("selected_camera")
@@ -50,6 +54,7 @@ def build_clips(edl: List[Dict[str, Any]], video_map: Dict[str, Path], offsets: 
         performance_start = 0.0
         performance_end = clip.duration
         if offsets and camera_name in offsets:
+            # Sync metadata tells us how much to shift each camera relative to the shared timeline.
             offset_sec = float(offsets[camera_name].get("offset_sec", 0.0))
             performance_start = float(offsets[camera_name].get("performance_start_sec", 0.0))
             performance_end = float(offsets[camera_name].get("performance_end_sec", clip.duration))
@@ -68,6 +73,7 @@ def build_clips(edl: List[Dict[str, Any]], video_map: Dict[str, Path], offsets: 
             clip.close()
             continue
 
+        # Subclip the original file to just the relevant section before compositing it into the final video.
         clip = clip.subclipped(clip_start, clip_end)
         clips.append((clip, entry))
     return clips
@@ -84,6 +90,7 @@ def add_title_screen(duration: float, output_size: Tuple[int, int]) -> Composite
 
 
 def render_video(edl_path: Path, output_path: Path, video_dir: Path = DEFAULT_VIDEO_DIR, offsets: Optional[Dict[str, Dict[str, float]]] = None) -> Path:
+    # Render is the final assembly stage: turn the synchronized EDL into a polished highlight clip.
     edl = load_edl(edl_path)
     video_map = {path.name: path for path in video_dir.glob("*.mp4")}
     clips_with_meta = build_clips(edl, video_map, offsets=offsets)
@@ -94,6 +101,7 @@ def render_video(edl_path: Path, output_path: Path, video_dir: Path = DEFAULT_VI
     rendered_clips = []
     for clip_index, (clip, entry) in enumerate(clips_with_meta):
         try:
+            # Add a caption for each selected segment so the final video is easier to follow and matches the EDL metadata.
             lower_third = entry.get("lower_third", {})
             overlay_text = lower_third.get("text", "Graduation Moment")
             overlay = (
@@ -113,6 +121,7 @@ def render_video(edl_path: Path, output_path: Path, video_dir: Path = DEFAULT_VI
             print(f"Warning: failed to render segment {clip_index} for camera {entry.get('selected_camera')}: {exc}")
             continue
 
+    # Concatenate all selected segments into a single highlight timeline in the order chosen by the EDL.
     final_clip = concatenate_videoclips(rendered_clips, method="compose")
     title_screen = add_title_screen(3.0, final_clip.size)
     closing_screen = (
@@ -124,7 +133,7 @@ def render_video(edl_path: Path, output_path: Path, video_dir: Path = DEFAULT_VI
     shifted_final_clip = final_clip.with_start(3.0)
     # Build the full composite first so audio tracks keep their timeline offsets (title silence preserved)
     final_video = CompositeVideoClip([title_screen, shifted_final_clip, closing_screen])
-    # final_video.audio will be the composite audio with correct timing; no manual reattach needed
+    # The final video duration includes the intro and closing screens, making the export timeline consistent and easy to audit.
     final_video = final_video.with_duration(final_clip.duration + 5.0)
     final_video.write_videofile(str(output_path), codec="libx264", fps=24, audio_codec="aac")
 
