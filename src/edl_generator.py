@@ -48,7 +48,22 @@ def _pick_camera(
     round_robin_index: int = 0,
     debug_scores: bool = False,
 ) -> Tuple[str, str]:
-    """Select the best camera for a time window by comparing audio energy scores."""
+    """Select the best camera for a time window by comparing audio energy scores.
+    
+    This function evaluates all available cameras for a specific timeline segment.
+    It applies sync offsets to ensure accurate audio window extraction and enforces
+    a rule to switch cameras if the same angle has been used for MAX_CONSECUTIVE_SEGMENTS
+    to maintain visual dynamism.
+    
+    Args:
+        offsets: Dictionary containing sync and performance window metadata.
+        time_sec: The current timeline position being evaluated.
+        previous_camera: The camera selected in the immediately preceding segment.
+        consecutive_count: How many times the previous_camera has been used in a row.
+        
+    Returns:
+        A tuple containing the selected camera name and the string reason for selection.
+    """
     cameras = [name for name in offsets.keys() if name != "performance_window"]
     if not cameras:
         raise ValueError("No cameras available to build an EDL")
