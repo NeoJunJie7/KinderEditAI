@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-
+<!-- KinderEdit AI Dashboard - Educator Portal
+     Purpose: Main dashboard for educators to manage graduation video projects
+     Features: Project overview, video upload, event timeline, camera recommendations
+     Tech Stack: Tailwind CSS, Material Symbols, custom Material Design 3 color palette -->
 <html class="dark" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
@@ -8,6 +11,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+
+<!-- Tailwind CSS Configuration
+     Extends default theme with Material Design 3 color system
+     Custom colors define the blue/primary theme for KinderEdit AI
+     Dark mode enabled by default for educator dashboard UI -->
 <script id="tailwind-config">
       tailwind.config = {
         darkMode: "class",
@@ -106,6 +114,12 @@
         },
       }
     </script>
+<!-- Custom CSS Styling
+     Defines visual effects and animations for dashboard components
+     Glass-panel: Frosted glass effect with blur backdrop
+     ai-gradient: Text gradient for AI-related headings
+     workflow-line: Visual separator for workflow progress
+     animate-float: Subtle floating animation for interactive elements -->
 <style>
         body {
             background-color: #071A2E;
@@ -136,7 +150,12 @@
     </style>
 </head>
 <body class="flex min-h-screen">
-<!-- SideNavBar (Shared Component) -->
+<!-- ============================================
+     NAVIGATION & LAYOUT STRUCTURE
+     ============================================ -->
+<!-- SideNavBar (Fixed Left Navigation)
+     Sticky sidebar with: Logo, main navigation menu, New Project button, Help & Logout
+     Fixed positioning allows persistent navigation while content scrolls -->
 <aside class="w-[260px] h-screen fixed left-0 top-0 overflow-y-auto border-r border-border-subtle bg-background-primary flex flex-col p-6 gap-2 z-50">
 <div class="flex items-center gap-3 mb-8">
 <div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
@@ -182,7 +201,12 @@
 </a>
 </div>
 </aside>
-<!-- Main Canvas -->
+<!-- ============================================
+     MAIN CONTENT AREA
+     ============================================ -->
+<!-- Main Canvas (Offset by sidebar width)
+     Contains: Top navigation bar, content container, and project information
+     Responsive layout adjusts for different screen sizes -->
 <main class="ml-[260px] flex-1 min-h-screen relative overflow-hidden">
 <!-- Subtle Ambient Background Animation -->
 
