@@ -419,7 +419,7 @@ Consent should cover:
 
 ## Malaysia PDPA 2010
 
-Children's recordings may contain identifiable personal data such as faces, names, voices, and school uniforms. Appropriate safeguards must be applied when storing and processing recordings. 【1-86c561】
+Children's recordings may contain identifiable personal data such as faces, names, voices, and school uniforms. Appropriate safeguards must be applied when storing and processing recordings. 【1-86c561】(https://www.pdp.gov.my/ppdpv1/en/akta/pdp-act-2010-en/)
 
 ## Copyright
 
@@ -431,10 +431,10 @@ Use only:
 
 ## Professional Responsibility
 
-- Human approval is mandatory
-- AI recommendations must remain transparent
-- Do not claim full automation
-- Keep humans responsible for final decisions
+- Human approval is mandatory: Teachers, administrators, or approved school staff must review and approve AI-generated edits before the video is exported, shared, or published.
+- AI recommendations must remain transparent: The system should clearly explain which clips, transitions, or timing choices were suggested and why, so users understand the basis for recommendations rather than blindly accepting them.
+- Do not claim full automation: Kid-safe or educational video creation must not be presented as fully autonomous. The AI should be positioned as an assistant that accelerates decision-making, not a replacement for professional oversight.
+- Keep humans responsible for final decisions: Final choices about inclusion, sequence, wording, privacy, consent, and distribution remain with the educator or designated human reviewer. The AI supports the workflow but does not make final publishing decisions.
 
 ---
 
