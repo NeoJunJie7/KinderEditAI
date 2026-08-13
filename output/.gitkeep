@@ -1,1 +1,2 @@
 # Keep empty output directory in version control
+# Stores generated exports, debug artifacts, and EDL sync outputs for the project
