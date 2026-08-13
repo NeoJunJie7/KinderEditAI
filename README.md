@@ -10,13 +10,13 @@ A semi-automated video editing pipeline that synchronizes multi-camera footage, 
 
 ## Overview
 
-A kindergarten graduation ceremony (or similar event) is recorded using multiple cameras from different angles. Instead of manually reviewing, synchronizing, and cutting hours of footage, this pipeline automates the process into three stages:
+A kindergarten graduation ceremony (or similar event) is recorded using multiple cameras from different angles in a semi-autonomous way instead of manually reviewing, synchronizing, and cutting hours of footage. This project addresses that challenge by turning the editing workflow into a semi-automated pipeline. Instead of requiring an editor to watch all footage by hand, the system analyzes the recordings and helps organize them into a clear decision-making workflow:
 
 1. **Sync** — aligns multiple camera recordings onto a shared timeline and detects the actual performance window within each (long) source file.
 2. **EDL Generation** — builds an Editing Decision List by scoring each camera's audio energy per time segment and selecting the best angle, with rules to avoid overly long single-camera runs.
 3. **Render** — assembles the final video from the EDL: trims and stitches camera clips, adds an opening title, closing credits, lower-third camera labels, and transitions.
 
-A human is expected to review the generated EDL and final video before publishing — this pipeline is **semi-automated**, not fully autonomous.
+The goal is to reduce manual effort while preserving human judgment. The system is designed to support editors and educators by accelerating the repetitive parts of the process, not by replacing final editorial decisions. A human reviewer is expected to inspect the generated sequence and final output before publication, which keeps the workflow **semi-automated** rather than fully autonomous.
 
 ---
 
