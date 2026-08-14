@@ -387,6 +387,23 @@ Render Engine
 graduation_highlight.mp4
 ```
 
+### Visual Data Flow (Mermaid)
+
+```mermaid
+graph TD
+    A[camera1.mp4<br>camera2.mp4] --> B[Synchronization Module<br>sync_config.json]
+    B --> C[Event Metadata Loader<br>events.json]
+    C --> D[AI Recommendation Engine]
+    D --> E[EDL Generator<br>generated_edl.json]
+    E --> F{🧑 HUMAN REVIEW}
+    F -->|Approve| G[approved_edl.json]
+    F -->|Modify| E
+    G --> H[Video Rendering Module<br>MoviePy + FFmpeg]
+    H --> I[graduation_highlight.mp4]
+    
+    style F fill:#ff9,stroke:#333,stroke-width:2px
+    style I fill:#9f9,stroke:#333,stroke-width:2px
+```
 ---
 
 # 6. File Structure
@@ -447,6 +464,7 @@ Purpose:
 - Video preview
 
 ---
+
 
 ## Backend
 
